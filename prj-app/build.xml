@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="df.app" default="build" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    <description>
+        Create a macOS application bundle for the Dwarf Fortress Classic distribution
+    </description>
+
+
+    <!-- ======================================================================================
+                                            PROPERTIES
+         ====================================================================================== -->
+
+    <dirname property="current.dir"     file="${ant.file}" />
+    <property file="${current.dir}/df.properties" />
+
+    <property name="prj-launcher.dir"   value="${current.dir}/../prj-launcher" />
+    <property name="dflauncher"         value="${prj-launcher.dir}/dflauncher" />
+
+    <property name="dist.dir"           value="${current.dir}/dist" />
+    <property name="df.tar.bz2"         value="${dist.dir}/df-${version}.tar.bz2" />
+
+    <property name="res.dir"            value="${current.dir}/res" />
+    <property name="df.png"             value="${res.dir}/df.png" />
+    <property name="Info.plist"         value="${res.dir}/Info.plist" />
+
+    <property name="build.dir"          value="${current.dir}/build" />
+    <property name="df.tar"             value="${build.dir}/df-${version}.tar" />
+    <property name="df_osx.dir"         value="${build.dir}/df_osx" />
+    <property name="init.txt"           value="${df_osx.dir}/data/init/init.txt" />
+    <property name="df.iconset"         value="${build.dir}/df.iconset" />
+    <property name="df.icns"            value="${build.dir}/df.icns" />
+
+    <property name="df.app"             value="${build.dir}/df.app" />
+    <property name="df.app.Contents"    value="${df.app}/Contents" />
+    <property name="df.app.MacOS"       value="${df.app.Contents}/MacOS" />
+    <property name="df.app.Resources"   value="${df.app.Contents}/Resources" />
+
+
+    <!-- ======================================================================================
+                                        MACRO DEFINITIONS
+         ====================================================================================== -->
+
+    <!--
+        Macro to run the "exec" with a standard configuration
+
+        IN:     dir         -> where to execute
+                executable  -> what to execute
+                args        -> passed as an argument
+    -->
+    <macrodef name="exe">
+        <attribute name="dir" />
+        <attribute name="executable" />
+        <attribute name="args" />
+        <sequential>
+            <exec dir="@{dir}" executable="@{executable}" failonerror="true" discardoutput="true">
+                <arg line="@{args}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+
+    <!--
+        Macro to run the macOS command "sips" to invoke the Apple Scriptable Image Processing System
+
+        IN:     size    -> size of the resized image
+        OUT:    resized image at ${df.iconset}/icon_@{size}x@{size}.png
+    -->
+    <macrodef name="sips">
+        <attribute name="size" />
+        <sequential>
+            <exe dir="${build.dir}"
+                 executable="sips"
+                 args="-z @{size} @{size} ${df.png} --out ${df.iconset}/icon_@{size}x@{size}.png" />
+        </sequential>
+    </macrodef>
+
+
+    <!--
+        Macro to run the macOS command "chmod" to add the executable flag to a file
+
+        IN:     dir     -> where to run the command
+                file    -> name of the file to add flag to
+    -->
+    <macrodef name="chmod">
+        <attribute name="dir" />
+        <attribute name="file" />
+        <sequential>
+            <exe dir="@{dir}" executable="chmod" args="+x @{file}" />
+        </sequential>
+    </macrodef>
+
+
+    <!-- ======================================================================================
+                                        EXTRA TARGET DEFINITIONS
+         ====================================================================================== -->
+
+    <target name="icon" description="Generate the macOS icon">
+        <mkdir dir="${df.iconset}" />
+        <sips size="16" />
+        <sips size="32" />
+        <sips size="64" />
+        <sips size="128" />
+        <sips size="256" />
+        <sips size="512" />
+        <sips size="1024" />
+        <exe dir="${build.dir}" executable="iconutil" args="-c icns ${df.iconset}" />
+    </target>
+
+
+    <target name="launcher" description="Generate the macOS launcher">
+        <exe dir="${prj-launcher.dir}" executable="make" args="all" />
+        <chmod dir="${prj-launcher.dir}" file="dflauncher" />
+    </target>
+
+
+    <target name="df" description="Setup Dwarf Fortress distribution">
+        <bunzip2 src="${df.tar.bz2}" dest="${df.tar}" />
+        <untar src="${df.tar}" dest="${build.dir}" />
+
+        <replace file="${init.txt}" token="[INTRO:YES]" value="[INTRO:NO]" />
+        <replace file="${init.txt}" token="[WINDOWEDX:80]" value="[WINDOWEDX:160]" />
+        <replace file="${init.txt}" token="[WINDOWEDY:25]" value="[WINDOWEDY:60]" />
+        <replace file="${init.txt}" token="[PRINT_MODE:2D]" value="[PRINT_MODE:STANDARD]" />
+        <replace file="${init.txt}" token="[FPS:NO]" value="[FPS:YES]" />
+    </target>
+
+
+    <!-- ======================================================================================
+                                        MAIN TARGET DEFINITIONS
+         ====================================================================================== -->
+
+    <target name="clean" description="Clean the build artifacts">
+        <delete dir="${build.dir}" failonerror="false" />
+    </target>
+
+
+    <target name="distribution" description="Download new distribution">
+        <delete dir="${dist.dir}" failonerror="false" />
+        <mkdir dir="${dist.dir}" />
+
+        <get src="${url}" dest="${df.tar.bz2}" />
+    </target>
+
+
+    <target name="build" depends="clean" description="Build the application bundle">
+        <fail message="df-${version}.tar.bz2 not available">
+            <condition>
+                <not>
+                    <available file="${df.tar.bz2}" />
+                </not>
+            </condition>
+        </fail>
+
+        <!-- i) Generate application bundle icon -->
+        <antcall target="icon" />
+
+        <!-- ii) Generate the application launcher -->
+        <antcall target="launcher" />
+
+        <!-- iii) Unpack archives after another and patch files -->
+        <antcall target="df" />
+
+        <!-- iv) Create applicatio bundle -->
+        <mkdir dir="${df.app.Resources}" />
+        <copy file="${df.icns}" todir="${df.app.Resources}" />
+
+        <mkdir dir="${df.app.MacOS}" />
+        <copy todir="${df.app.MacOS}">
+            <fileset dir="${df_osx.dir}" />
+        </copy>
+        <copy file="${dflauncher}" todir="${df.app.MacOS}" />
+
+        <!-- v) Add executable flag to all necessary files -->
+        <chmod dir="${df.app.MacOS}" file="df" />
+        <chmod dir="${df.app.MacOS}" file="dwarfort.exe" />
+        <chmod dir="${df.app.MacOS}" file="dflauncher" />
+
+        <!-- vi) Copy application bundle information and patch -->
+        <copy file="${Info.plist}" todir="${df.app.Contents}" />
+        <replace file="${df.app.Contents}/Info.plist" token="TPL_VERSION" value="${version}" />
+
+        <!-- vii) Sign the application -->
+        <exe dir="${build.dir}" executable="codesign" args="--force --deep --sign - ${df.app}" />
+    </target>
+</project>

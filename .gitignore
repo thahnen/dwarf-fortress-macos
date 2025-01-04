@@ -1,0 +1,11 @@
+# Build directories generated from Ant
+build/
+
+# Cached distribution of Dwarf Fortress
+dist/
+
+# C executable output
+dflauncher
+
+# macOS stuff
+.DS_Store

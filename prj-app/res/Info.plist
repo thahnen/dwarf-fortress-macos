@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>CFBundleDevelopmentRegion</key>
+        <string>English</string>
+
+        <key>CFBundleExecutable</key>
+        <string>dflauncher</string>
+
+        <key>CFBundleIconFile</key>
+        <string>df.icns</string>
+
+        <key>CFBundleIdentifier</key>
+        <string>com.hahnentt.external.df.TPL_VERSION</string>
+
+        <key>CFBundleDisplayName</key>
+        <string>Dwarf Fortress</string>
+
+        <key>CFBundleGetInfoString</key>
+        <string>Dwarf Fortress (Classic) running on macOS</string>
+
+        <key>CFBundleInfoDictionaryVersion</key>
+        <string>6.0</string>
+        
+        <key>CFBundleName</key>
+        <string>Dwarf Fortress</string>
+        
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        
+        <key>CFBundleShortVersionString</key>
+        <string>TPL_VERSION</string>
+        
+        <key>CFBundleVersion</key>
+        <string>TPL_VERSION</string>
+        
+        <key>CFBundleSignature</key>
+        <string>????</string>
+        
+        <key>NSHumanReadableCopyright</key>
+        <string>Tobias Hahnen</string>
+        
+        <key>LSApplicationCategoryType</key>
+        <string>public.app-category.games</string>
+        
+        <key>LSUIElement</key>
+        <false/>
+        
+        <key>NSHighResolutionCapable</key>
+        <true/>
+        
+        <key>NSSupportsAutomaticGraphicsSwitching</key>
+        <true/>
+        
+        <key>IgnorePSN</key>
+        <false/>
+        
+        <key>NSRequiresAquaSystemAppearance</key>
+        <false/>
+        
+        <key>CFBundleDocumentTypes</key>
+        <array>
+        </array>
+        
+        <key>LSEnvironment</key>
+        <dict>
+            <key>LC_CTYPE</key>
+            <string>UTF-8</string>
+        </dict>
+    </dict>
+</plist>
