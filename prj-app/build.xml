@@ -74,21 +74,6 @@
     </macrodef>
 
 
-    <!--
-        Macro to run the macOS command "chmod" to add the executable flag to a file
-
-        IN:     dir     -> where to run the command
-                file    -> name of the file to add flag to
-    -->
-    <macrodef name="chmod">
-        <attribute name="dir" />
-        <attribute name="file" />
-        <sequential>
-            <exe dir="@{dir}" executable="chmod" args="+x @{file}" />
-        </sequential>
-    </macrodef>
-
-
     <!-- ======================================================================================
                                         EXTRA TARGET DEFINITIONS
          ====================================================================================== -->
@@ -108,7 +93,7 @@
 
     <target name="launcher" description="Generate the macOS launcher">
         <exe dir="${prj-launcher.dir}" executable="make" args="all" />
-        <chmod dir="${prj-launcher.dir}" file="dflauncher" />
+        <chmod file="${prj-launcher.dir}/dflauncher" perm="+x" />
     </target>
 
 
@@ -129,12 +114,12 @@
          ====================================================================================== -->
 
     <target name="clean" description="Clean the build artifacts">
-        <delete dir="${build.dir}" failonerror="false" />
+        <delete dir="${build.dir}" />
     </target>
 
 
     <target name="distribution" description="Download new distribution">
-        <delete dir="${dist.dir}" failonerror="false" />
+        <delete dir="${dist.dir}" />
         <mkdir dir="${dist.dir}" />
 
         <get src="${url}" dest="${df.tar.bz2}" />
@@ -170,9 +155,9 @@
         <copy file="${dflauncher}" todir="${df.app.MacOS}" />
 
         <!-- v) Add executable flag to all necessary files -->
-        <chmod dir="${df.app.MacOS}" file="df" />
-        <chmod dir="${df.app.MacOS}" file="dwarfort.exe" />
-        <chmod dir="${df.app.MacOS}" file="dflauncher" />
+        <chmod file="${df.app.MacOS}/df" perm="+x" />
+        <chmod file="${df.app.MacOS}/dwarfort.exe" perm="+x" />
+        <chmod file="${df.app.MacOS}/dflauncher" perm="+x" />
 
         <!-- vi) Copy application bundle information and patch -->
         <copy file="${Info.plist}" todir="${df.app.Contents}" />

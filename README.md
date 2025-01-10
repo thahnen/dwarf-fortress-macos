@@ -1,8 +1,7 @@
 # Dwarf Fortress for macOS
 
 This repository contains projects to create an application bundle to wrap the distribution of Dwarf
-Fortress and patch it to work as smooth as possible with macOS 11 or later. In addition a
-installable package is also created from this application bundle to install it easily on machines.
+Fortress and patch it to work as smooth as possible with macOS 11 or later.
 
 This currently relies on the latest available Dwarf Fortress Classic version that was released for
 macOS ([0.47.05 from 28.01.2021](https://www.bay12games.com/dwarves/older_versions.html)).
@@ -13,7 +12,6 @@ This repository contains the following projects:
 
 - Create a simple Dwarf Fortress bash script launcher
 - Create the application bundle
-- Create the application package installer
 
 The order above is also the order of building the final application package installer. The Dwarf
 Fortress bash script launcher is necessary as macOS application bundles cannot start shell scripts

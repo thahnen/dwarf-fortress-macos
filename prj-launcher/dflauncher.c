@@ -28,11 +28,12 @@ int main(int argc, char **argv) {
 
   /* iii) Generate the absolute path to the script */
   uint64_t length = strlen(absExePath);
-  char absScriptPath[length+3];
+  char absScriptPath[length+4];
   strncpy(absScriptPath, absExePath, length);
   absScriptPath[length] = '/';
   absScriptPath[length+1] = 'd';
   absScriptPath[length+2] = 'f';
+  absScriptPath[length+3] = '\0';
 
   /* iv) Info only when not in production, otherwise run script */
   if (argc > 1) {
