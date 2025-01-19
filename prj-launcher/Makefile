@@ -2,7 +2,7 @@
 CC = gcc
 
 # Necessary for Eclipse CDT
-all: dflauncher
+all: clean dflauncher
 
 # Create the actual launcher
 dflauncher: dflauncher.c

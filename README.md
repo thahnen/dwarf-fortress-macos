@@ -6,6 +6,17 @@ Fortress and patch it to work as smooth as possible with macOS 11 or later.
 This currently relies on the latest available Dwarf Fortress Classic version that was released for
 macOS ([0.47.05 from 28.01.2021](https://www.bay12games.com/dwarves/older_versions.html)).
 
+## Installation
+
+Download and unpack the archive from the
+[GitHub Relases](https://github.com/thahnen/dwarf-fortress-macos/releases) page. Move the
+application to its final destination and open it. If this does not work immidietely, try running
+the following command:
+
+```shell
+sudo codesign --force --deep --sign - df.app
+```
+
 ## Projects
 
 This repository contains the following projects:
